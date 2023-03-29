@@ -1,0 +1,9 @@
+{
+	"name": "Dirtykiki",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "774ce430-54b3-431d-84e7-26e41bf82564",
+		"tenantId": "151d6931-3e24-49a9-aa97-8393b52af357"
+	}
+}
