@@ -3,26 +3,6 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Databrickskiki",
-				"type": "DatabricksNotebook",
-				"dependsOn": [],
-				"policy": {
-					"timeout": "0.12:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"notebookPath": "/kikinobuk"
-				},
-				"linkedServiceName": {
-					"referenceName": "AzureDatabrickskiki",
-					"type": "LinkedServiceReference"
-				}
-			},
-			{
 				"name": "DatalakeToSqlDB",
 				"type": "Copy",
 				"dependsOn": [
@@ -152,6 +132,26 @@
 						"type": "DatasetReference"
 					}
 				]
+			},
+			{
+				"name": "Databrickskiki",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/kikinobuk"
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabrickskiki",
+					"type": "LinkedServiceReference"
+				}
 			}
 		],
 		"annotations": []
