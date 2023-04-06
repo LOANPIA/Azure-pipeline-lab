@@ -1,0 +1,45 @@
+{
+	"name": "EmployeeInp",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStoragekiki",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "Employee_Dirty.csv",
+				"folderPath": "folderkiki_dirty",
+				"fileSystem": "containerkiki"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "41",
+				"type": "String"
+			},
+			{
+				"name": "Felmeal",
+				"type": "String"
+			},
+			{
+				"name": "Singer",
+				"type": "String"
+			},
+			{
+				"name": "1",
+				"type": "String"
+			},
+			{
+				"name": "Cynthia,Holden",
+				"type": "String"
+			}
+		]
+	}
+}

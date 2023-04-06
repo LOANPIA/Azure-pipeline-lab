@@ -1,0 +1,47 @@
+{
+	"name": "AzureSqlTabledirtysink",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabasekiki",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "StandardHours",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "TotalWorkingYears",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "YearsAtCompany",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "YearsInCurrentRole",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "YearsSinceLastPromotion",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "YearsWithCurrManager",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "worktimes"
+		}
+	}
+}
