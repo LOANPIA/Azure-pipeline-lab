@@ -1,0 +1,45 @@
+{
+	"name": "EnvironmentDS",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorageLS",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "Env_Dirty.csv",
+				"folderPath": "folderkiki_dirty",
+				"container": "containerkiki"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "EnvironmentSatisfaction",
+				"type": "String"
+			},
+			{
+				"name": "JobInvolvement",
+				"type": "String"
+			},
+			{
+				"name": "JobSatisfaction",
+				"type": "String"
+			},
+			{
+				"name": "RelationshipSatisfaction",
+				"type": "String"
+			},
+			{
+				"name": "WorkLifeBalance",
+				"type": "String"
+			}
+		]
+	}
+}
