@@ -53,7 +53,8 @@
 				"     columnNamesAsHeader: true,",
 				"     partitionFileNames:['Employee_Data'],",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> sinkEmp"
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sinkEmp"
 			]
 		}
 	}
