@@ -1,0 +1,53 @@
+{
+	"name": "JobDS",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorageLS",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "Job_Dirty.csv",
+				"folderPath": "folderkiki_dirty",
+				"container": "containerkiki"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "Attrition",
+				"type": "String"
+			},
+			{
+				"name": "BusinessTravel",
+				"type": "String"
+			},
+			{
+				"name": "Department",
+				"type": "String"
+			},
+			{
+				"name": "JobLevel",
+				"type": "String"
+			},
+			{
+				"name": "JobRole",
+				"type": "String"
+			},
+			{
+				"name": "NumCompaniesWorked",
+				"type": "String"
+			},
+			{
+				"name": "OverTime",
+				"type": "String"
+			}
+		]
+	}
+}

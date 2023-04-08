@@ -1,0 +1,86 @@
+{
+	"name": "dataflowEmp",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "EmployeeDS",
+						"type": "DatasetReference"
+					},
+					"name": "EmployeeSource"
+				}
+			],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "AzureBlobStorageSink",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sinkEmp"
+				},
+				{
+					"linkedService": {
+						"referenceName": "AzureBlobStorageSink",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sinkEmployeeByGender"
+				}
+			],
+			"transformations": [
+				{
+					"name": "derivedDirtyCol"
+				},
+				{
+					"name": "Genderdivide"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          Age as short,",
+				"          Gender as string,",
+				"          MaritalStatus as string,",
+				"          EmployeeNumber as string,",
+				"          EmployeeName as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     partitionBy('hash', 1)) ~> EmployeeSource",
+				"EmployeeSource derive(EmployeeName = replace(EmployeeName, \",\", \" \"),",
+				"          EmployeeNumber = iif(isNull(EmployeeNumber), \"Unknown\", replace(EmployeeNumber, \"#\", \"\")),",
+				"          Gender = replace(Gender, \"Felmeal\", \"Female\"),",
+				"          MaritalStatus = replace(MaritalStatus, \"Singer\", \"Single\")) ~> derivedDirtyCol",
+				"derivedDirtyCol aggregate(groupBy(Gender),",
+				"     EmployeeByGender = count()) ~> Genderdivide",
+				"derivedDirtyCol sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delimited',",
+				"     container: 'containerkiki',",
+				"     folderPath: 'folderkiki_clean',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: true,",
+				"     partitionFileNames:['Employee_Data.csv'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sinkEmp",
+				"Genderdivide sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delimited',",
+				"     container: 'containerkiki',",
+				"     folderPath: 'folderkiki_clean',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: true,",
+				"     partitionFileNames:['EmployeeGender_Data.csv'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sinkEmployeeByGender"
+			]
+		}
+	}
+}

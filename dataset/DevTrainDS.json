@@ -1,0 +1,37 @@
+{
+	"name": "DevTrainDS",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorageLS",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "DevTrain_Dirty.csv",
+				"folderPath": "folderkiki_dirty",
+				"container": "containerkiki"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "Education",
+				"type": "String"
+			},
+			{
+				"name": "EducationField",
+				"type": "String"
+			},
+			{
+				"name": "TrainingTimesLastYear",
+				"type": "String"
+			}
+		]
+	}
+}

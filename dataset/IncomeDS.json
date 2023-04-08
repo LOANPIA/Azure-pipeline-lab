@@ -1,0 +1,45 @@
+{
+	"name": "IncomeDS",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorageLS",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "Income_Dirty.csv",
+				"folderPath": "folderkiki_dirty",
+				"container": "containerkiki"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "DailyRate",
+				"type": "String"
+			},
+			{
+				"name": "HourlyRate",
+				"type": "String"
+			},
+			{
+				"name": "MonthlyIncome",
+				"type": "String"
+			},
+			{
+				"name": "PercentSalaryHike",
+				"type": "String"
+			},
+			{
+				"name": "Employee_Salary_Number",
+				"type": "String"
+			}
+		]
+	}
+}

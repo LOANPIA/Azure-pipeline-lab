@@ -1,0 +1,49 @@
+{
+	"name": "WorktimeDS",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorageLS",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "Worktime_Dirty.csv",
+				"folderPath": "folderkiki_dirty",
+				"container": "containerkiki"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "StandardHours",
+				"type": "String"
+			},
+			{
+				"name": "TotalWorkingYears",
+				"type": "String"
+			},
+			{
+				"name": "YearsAtCompany",
+				"type": "String"
+			},
+			{
+				"name": "YearsInCurrentRole",
+				"type": "String"
+			},
+			{
+				"name": "YearsSinceLastPromotion",
+				"type": "String"
+			},
+			{
+				"name": "YearsWithCurrManager",
+				"type": "String"
+			}
+		]
+	}
+}
