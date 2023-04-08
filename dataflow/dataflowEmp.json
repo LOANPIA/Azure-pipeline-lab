@@ -1,13 +1,58 @@
 {
-	"name": "dataflow1",
+	"name": "dataflowEmp",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
-			"sources": [],
-			"sinks": [],
-			"transformations": [],
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "EmployeeDS",
+						"type": "DatasetReference"
+					},
+					"name": "EmployeeSource"
+				}
+			],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "AzureBlobStorageSink",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sinkEmp"
+				}
+			],
+			"transformations": [
+				{
+					"name": "derivedColumn1"
+				}
+			],
 			"scriptLines": [
-				""
+				"source(output(",
+				"          Age as short,",
+				"          Gender as string,",
+				"          MaritalStatus as string,",
+				"          EmployeeNumber as string,",
+				"          EmployeeName as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> EmployeeSource",
+				"EmployeeSource derive(EmployeeName = replace(EmployeeName, \",\", \" \"),",
+				"          EmployeeNumber = iif(isNull(EmployeeNumber), \"Unknown\", replace(EmployeeNumber, \"#\", \"\")),",
+				"          Gender = replace(Gender, \"Felmeal\", \"Female\"),",
+				"          MaritalStatus = replace(MaritalStatus, \"Singer\", \"Single\")) ~> derivedColumn1",
+				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delimited',",
+				"     container: 'containerkiki',",
+				"     folderPath: 'folderkiki_clean',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: true,",
+				"     partitionFileNames:['Employee_Data'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sinkEmp"
 			]
 		}
 	}
