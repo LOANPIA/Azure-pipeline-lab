@@ -1,5 +1,5 @@
 {
-	"name": "EmployeeDS",
+	"name": "EmpDS",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "AzureBlobStorageLS",
@@ -10,7 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": "Employee_Dirty.csv",
+				"fileName": "Emp_Dirty.csv",
 				"folderPath": "folderkiki_dirty",
 				"container": "containerkiki"
 			},
