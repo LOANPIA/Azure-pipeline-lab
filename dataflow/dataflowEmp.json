@@ -6,10 +6,17 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "EmployeeDS",
+						"referenceName": "EmpDS",
 						"type": "DatasetReference"
 					},
 					"name": "EmployeeSource"
+				},
+				{
+					"dataset": {
+						"referenceName": "JobDS",
+						"type": "DatasetReference"
+					},
+					"name": "JobSource"
 				}
 			],
 			"sinks": [
@@ -30,10 +37,13 @@
 			],
 			"transformations": [
 				{
-					"name": "derivedDirtyCol"
+					"name": "derivedDirtyEmpCol"
 				},
 				{
 					"name": "Genderdivide"
+				},
+				{
+					"name": "derivedDirtyJobCol"
 				}
 			],
 			"scriptLines": [
@@ -48,13 +58,28 @@
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
 				"     partitionBy('hash', 1)) ~> EmployeeSource",
+				"source(output(",
+				"          Attrition as string,",
+				"          BusinessTravel as string,",
+				"          Department as string,",
+				"          JobLevel as string,",
+				"          JobRole as string,",
+				"          NumCompaniesWorked as string,",
+				"          OverTime as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> JobSource",
 				"EmployeeSource derive(EmployeeName = replace(EmployeeName, \",\", \" \"),",
 				"          EmployeeNumber = iif(isNull(EmployeeNumber), \"Unknown\", replace(EmployeeNumber, \"#\", \"\")),",
-				"          Gender = replace(Gender, \"Felmeal\", \"Female\"),",
-				"          MaritalStatus = replace(MaritalStatus, \"Singer\", \"Single\")) ~> derivedDirtyCol",
-				"derivedDirtyCol aggregate(groupBy(Gender),",
-				"     EmployeeByGender = count()) ~> Genderdivide",
-				"derivedDirtyCol sink(allowSchemaDrift: true,",
+				"          Gender = iif(isNull(Gender), \"LGBT\", replace(Gender, \"Felmeal\", \"Female\")),",
+				"          MaritalStatus = replace(MaritalStatus, \"Singer\", \"Single\")) ~> derivedDirtyEmpCol",
+				"derivedDirtyEmpCol aggregate(groupBy(Gender),",
+				"     EmployeeByGender = count(),",
+				"     partitionBy('hash', 1)) ~> Genderdivide",
+				"JobSource derive(Attrition = iif(Attrition == 'Undefined', iif(OverTime == 'Yes', 'Yes', 'No'), Attrition),",
+				"          BusinessTravel = replace(BusinessTravel, '$%^', '')) ~> derivedDirtyJobCol",
+				"derivedDirtyEmpCol sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delimited',",
 				"     container: 'containerkiki',",
