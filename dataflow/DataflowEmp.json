@@ -18,7 +18,7 @@
 						"referenceName": "AzureBlobStorageSink",
 						"type": "LinkedServiceReference"
 					},
-					"name": "sink1"
+					"name": "sinkEmp"
 				}
 			],
 			"transformations": [
@@ -51,7 +51,7 @@
 				"     partitionFileNames:['Employee_Data'],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     partitionBy('hash', 1)) ~> sink1"
+				"     partitionBy('hash', 1)) ~> sinkEmp"
 			]
 		}
 	}
