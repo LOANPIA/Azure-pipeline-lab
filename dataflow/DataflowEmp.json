@@ -1,5 +1,5 @@
 {
-	"name": "dataflow1",
+	"name": "DataflowEmp",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
@@ -10,47 +10,48 @@
 						"type": "DatasetReference"
 					},
 					"name": "EmployeeSource"
-				},
-				{
-					"dataset": {
-						"referenceName": "WorktimeDS",
-						"type": "DatasetReference"
-					},
-					"name": "WorktimeSource"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "AzureBlobStorageSink",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sink1"
+				}
+			],
 			"transformations": [
 				{
-					"name": "join1"
+					"name": "derivedDirtyCol",
+					"description": "Creating/updating the columns 'Age, Gender, MaritalStatus, EmployeeNumber"
 				}
 			],
 			"scriptLines": [
 				"source(output(",
-				"          Age as string,",
+				"          Age as integer,",
 				"          Gender as string,",
 				"          MaritalStatus as string,",
-				"          EmployeeNumber as string",
+				"          EmployeeNumber as integer",
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> EmployeeSource",
-				"source(output(",
-				"          StandardHours as string,",
-				"          TotalWorkingYears as string,",
-				"          YearsAtCompany as string,",
-				"          YearsInCurrentRole as string,",
-				"          YearsSinceLastPromotion as string,",
-				"          YearsWithCurrManager as string",
-				"     ),",
-				"     allowSchemaDrift: true,",
+				"EmployeeSource derive(Gender = replace(Gender, \"Felmeal\", \"Female\"),",
+				"          MaritalStatus = replace(MaritalStatus, \"Singer\", \"Single\")) ~> derivedDirtyCol",
+				"derivedDirtyCol sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> WorktimeSource",
-				"EmployeeSource, WorktimeSource join(ERROR_FUNCTION('') == ERROR_FUNCTION(''),",
-				"     joinType:'outer',",
-				"     matchType:'exact',",
-				"     ignoreSpaces: false,",
-				"     broadcast: 'auto')~> join1"
+				"     format: 'delimited',",
+				"     container: 'containerkiki',",
+				"     folderPath: 'folderkiki_clean',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: false,",
+				"     partitionFileNames:['Employee_Data'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink1"
 			]
 		}
 	}
