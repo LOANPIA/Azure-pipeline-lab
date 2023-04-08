@@ -23,7 +23,7 @@
 			],
 			"transformations": [
 				{
-					"name": "derivedColumn1"
+					"name": "derivedDirtyCol"
 				}
 			],
 			"scriptLines": [
@@ -40,8 +40,8 @@
 				"EmployeeSource derive(EmployeeName = replace(EmployeeName, \",\", \" \"),",
 				"          EmployeeNumber = iif(isNull(EmployeeNumber), \"Unknown\", replace(EmployeeNumber, \"#\", \"\")),",
 				"          Gender = replace(Gender, \"Felmeal\", \"Female\"),",
-				"          MaritalStatus = replace(MaritalStatus, \"Singer\", \"Single\")) ~> derivedColumn1",
-				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"          MaritalStatus = replace(MaritalStatus, \"Singer\", \"Single\")) ~> derivedDirtyCol",
+				"derivedDirtyCol sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delimited',",
 				"     container: 'containerkiki',",
