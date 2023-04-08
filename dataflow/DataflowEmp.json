@@ -5,10 +5,6 @@
 		"typeProperties": {
 			"sources": [
 				{
-					"dataset": {
-						"referenceName": "EmployeeDS",
-						"type": "DatasetReference"
-					},
 					"name": "EmployeeSource"
 				}
 			],
@@ -30,21 +26,14 @@
 				}
 			],
 			"scriptLines": [
-				"source(output(",
-				"          Age as string,",
-				"          Gender as string,",
-				"          MaritalStatus as string,",
-				"          EmployeeNumber as string,",
-				"          { EmployeeName} as string",
-				"     ),",
-				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> EmployeeSource",
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false) ~> EmployeeSource",
 				"derivedColumn1 derive(Gender = replace(Gender, \"Felmeal\", \"Female\"),",
 				"          MaritalStatus = replace(MaritalStatus, \"Singer\", \"Single\"),",
 				"          { EmployeeName} = replace(EmployeeName, \",\", \" \"),",
 				"          EmployeeNumber = replace(toString(EmployeeNumber), \"#\", \"\")) ~> derivedDirtyCol",
-				"EmployeeSource derive({ EmployeeName} = replace(EmployeeName, \",\", \" \")) ~> derivedColumn1",
+				"EmployeeSource derive({ EmployeeName} = replace(EmployeeName, \",\", \" \"),",
+				"     partitionBy('hash', 1)) ~> derivedColumn1",
 				"derivedDirtyCol sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delimited',",
