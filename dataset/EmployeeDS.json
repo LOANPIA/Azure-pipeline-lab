@@ -37,7 +37,7 @@
 				"type": "String"
 			},
 			{
-				"name": " EmployeeName",
+				"name": "EmployeeName",
 				"type": "String"
 			}
 		]

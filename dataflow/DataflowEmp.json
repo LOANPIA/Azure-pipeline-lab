@@ -5,48 +5,31 @@
 		"typeProperties": {
 			"sources": [
 				{
-					"name": "EmployeeSource"
-				}
-			],
-			"sinks": [
-				{
-					"linkedService": {
-						"referenceName": "AzureBlobStorageSink",
-						"type": "LinkedServiceReference"
+					"dataset": {
+						"referenceName": "EmployeeDS",
+						"type": "DatasetReference"
 					},
-					"name": "sinkEmp"
+					"name": "EmpSource"
 				}
 			],
+			"sinks": [],
 			"transformations": [
 				{
-					"name": "derivedDirtyCol"
-				},
-				{
-					"name": "derivedColumn1"
+					"name": "derivedColumn2"
 				}
 			],
 			"scriptLines": [
-				"source(allowSchemaDrift: true,",
-				"     validateSchema: false) ~> EmployeeSource",
-				"derivedColumn1 derive(Gender = replace(Gender, \"Felmeal\", \"Female\"),",
-				"          MaritalStatus = replace(MaritalStatus, \"Singer\", \"Single\"),",
-				"          { EmployeeName} = replace(EmployeeName, \",\", \" \"),",
-				"          EmployeeNumber = replace(toString(EmployeeNumber), \"#\", \"\")) ~> derivedDirtyCol",
-				"EmployeeSource derive({ EmployeeName} = replace(EmployeeName, \",\", \" \"),",
-				"     partitionBy('hash', 1)) ~> derivedColumn1",
-				"derivedDirtyCol sink(allowSchemaDrift: true,",
+				"source(output(",
+				"          Age as short,",
+				"          Gender as string,",
+				"          MaritalStatus as string,",
+				"          EmployeeNumber as string,",
+				"          EmployeeName as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     format: 'delimited',",
-				"     container: 'containerkiki',",
-				"     folderPath: 'folderkiki_clean',",
-				"     columnDelimiter: ',',",
-				"     escapeChar: '\\\\',",
-				"     quoteChar: '\\\"',",
-				"     columnNamesAsHeader: true,",
-				"     partitionFileNames:['Employee_Data'],",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true,",
-				"     partitionBy('hash', 1)) ~> sinkEmp"
+				"     ignoreNoFilesFound: false) ~> EmpSource",
+				"EmpSource derive({ EmployeeName} = replace( EmployeeName, \",\", \" \")) ~> derivedColumn2"
 			]
 		}
 	}
