@@ -19,11 +19,21 @@
 						"type": "LinkedServiceReference"
 					},
 					"name": "sinkEmp"
+				},
+				{
+					"linkedService": {
+						"referenceName": "AzureBlobStorageSink",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sinkEmployeeByGender"
 				}
 			],
 			"transformations": [
 				{
 					"name": "derivedDirtyCol"
+				},
+				{
+					"name": "Genderdivide"
 				}
 			],
 			"scriptLines": [
@@ -42,6 +52,8 @@
 				"          EmployeeNumber = iif(isNull(EmployeeNumber), \"Unknown\", replace(EmployeeNumber, \"#\", \"\")),",
 				"          Gender = replace(Gender, \"Felmeal\", \"Female\"),",
 				"          MaritalStatus = replace(MaritalStatus, \"Singer\", \"Single\")) ~> derivedDirtyCol",
+				"derivedDirtyCol aggregate(groupBy(Gender),",
+				"     EmployeeByGender = count()) ~> Genderdivide",
 				"derivedDirtyCol sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delimited',",
@@ -54,7 +66,20 @@
 				"     partitionFileNames:['Employee_Data.csv'],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     partitionBy('hash', 1)) ~> sinkEmp"
+				"     partitionBy('hash', 1)) ~> sinkEmp",
+				"Genderdivide sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delimited',",
+				"     container: 'containerkiki',",
+				"     folderPath: 'folderkiki_clean',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: true,",
+				"     partitionFileNames:['EmployeeGender_Data.csv'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sinkEmployeeByGender"
 			]
 		}
 	}
