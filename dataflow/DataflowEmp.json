@@ -23,8 +23,7 @@
 			],
 			"transformations": [
 				{
-					"name": "derivedDirtyCol",
-					"description": "Creating/updating the columns 'Age, Gender, MaritalStatus, EmployeeNumber"
+					"name": "derivedColumn2"
 				}
 			],
 			"scriptLines": [
@@ -37,9 +36,8 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> EmployeeSource",
-				"EmployeeSource derive(Gender = replace(Gender, \"Felmeal\", \"Female\"),",
-				"          MaritalStatus = replace(MaritalStatus, \"Singer\", \"Single\")) ~> derivedDirtyCol",
-				"derivedDirtyCol sink(allowSchemaDrift: true,",
+				"EmployeeSource derive() ~> derivedColumn2",
+				"derivedColumn2 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delimited',",
 				"     container: 'containerkiki',",
