@@ -5,31 +5,23 @@
 		"typeProperties": {
 			"sources": [
 				{
-					"dataset": {
-						"referenceName": "EmployeeDS",
-						"type": "DatasetReference"
-					},
-					"name": "EmpSource"
+					"name": "EmployeeSource"
 				}
 			],
 			"sinks": [],
 			"transformations": [
 				{
+					"name": "derivedColumn1"
+				},
+				{
 					"name": "derivedColumn2"
 				}
 			],
 			"scriptLines": [
-				"source(output(",
-				"          Age as short,",
-				"          Gender as string,",
-				"          MaritalStatus as string,",
-				"          EmployeeNumber as string,",
-				"          EmployeeName as string",
-				"     ),",
-				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> EmpSource",
-				"EmpSource derive({ EmployeeName} = replace( EmployeeName, \",\", \" \")) ~> derivedColumn2"
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false) ~> EmployeeSource",
+				"derivedColumn2 derive() ~> derivedColumn1",
+				"EmployeeSource derive() ~> derivedColumn2"
 			]
 		}
 	}
