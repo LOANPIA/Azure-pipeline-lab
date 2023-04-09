@@ -51,12 +51,6 @@
 				},
 				{
 					"name": "derivedDirtyJobCol"
-				},
-				{
-					"name": "lookupEmpName"
-				},
-				{
-					"name": "derivedDirtyCol"
 				}
 			],
 			"scriptLines": [
@@ -64,7 +58,7 @@
 				"          Age as short,",
 				"          Gender as string,",
 				"          MaritalStatus as string,",
-				"          EmployeeNumber as string,",
+				"          EmployeeNumber as integer,",
 				"          EmployeeName as string",
 				"     ),",
 				"     allowSchemaDrift: true,",
@@ -103,12 +97,6 @@
 				"     partitionBy('hash', 1)) ~> Genderdivide",
 				"JobSource derive(Attrition = iif(Attrition == 'Undefined', iif(OverTime == 'Yes', 'Yes', 'No'), Attrition),",
 				"          BusinessTravel = replace(BusinessTravel, '$%^', '')) ~> derivedDirtyJobCol",
-				"derivedDirtyCol, EmployeeSource lookup(derivedDirtyCol@EmployeeName == EmployeeSource@EmployeeName,",
-				"     multiple: true,",
-				"     partitionBy('hash', 1),",
-				"     broadcast: 'both')~> lookupEmpName",
-				"DevTrainSource derive(EducationField = replace(EducationField, \"ee#$%^&Sciences123\", \" Sciences\"),",
-				"          EmployeeName = replace(EmployeeName, \",\", \" \")) ~> derivedDirtyCol",
 				"derivedDirtyEmpCol sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delimited',",
