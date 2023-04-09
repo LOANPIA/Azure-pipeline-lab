@@ -53,7 +53,7 @@
 					"name": "derivedDirtyJobCol"
 				},
 				{
-					"name": "lookupEmpNumber"
+					"name": "selectEmpNumber"
 				}
 			],
 			"scriptLines": [
@@ -84,12 +84,12 @@
 				"          Education as string,",
 				"          EducationField as string,",
 				"          TrainingTimesLastYear as string,",
-				"          EmployeeDTNumber as string",
+				"          EmployeeDTNumber as integer",
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> DevTrainSource",
-				"EmployeeSource derive(EmployeeName = replace(EmployeeName, \",\", \" \"),",
+				"selectEmpNumber derive(EmployeeName = replace(EmployeeName, \",\", \" \"),",
 				"          EmployeeNumber = iif(isNull(EmployeeNumber), \"Unknown\", replace(EmployeeNumber, \"#\", \"\")),",
 				"          Gender = iif(isNull(Gender), \"LGBT\", replace(Gender, \"Felmeal\", \"Female\")),",
 				"          MaritalStatus = replace(MaritalStatus, \"Singer\", \"Single\")) ~> derivedDirtyEmpCol",
@@ -98,10 +98,13 @@
 				"     partitionBy('hash', 1)) ~> Genderdivide",
 				"JobSource derive(Attrition = iif(Attrition == 'Undefined', iif(OverTime == 'Yes', 'Yes', 'No'), Attrition),",
 				"          BusinessTravel = replace(BusinessTravel, '$%^', '')) ~> derivedDirtyJobCol",
-				"DevTrainSource, EmployeeSource lookup(EmployeeDTNumber == EmployeeNumber,",
-				"     multiple: false,",
-				"     pickup: 'any',",
-				"     broadcast: 'auto')~> lookupEmpNumber",
+				"EmployeeSource select(mapColumn(",
+				"          EmployeeNumber,",
+				"          EmployeeName",
+				"     ),",
+				"     partitionBy('hash', 1),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> selectEmpNumber",
 				"derivedDirtyEmpCol sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delimited',",
