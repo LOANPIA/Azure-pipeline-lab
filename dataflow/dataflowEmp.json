@@ -19,6 +19,10 @@
 					"name": "JobSource"
 				},
 				{
+					"dataset": {
+						"referenceName": "DevTrainDS",
+						"type": "DatasetReference"
+					},
 					"name": "DevTrainSource"
 				}
 			],
@@ -47,6 +51,12 @@
 				},
 				{
 					"name": "derivedDirtyJobCol"
+				},
+				{
+					"name": "lookupEmpName"
+				},
+				{
+					"name": "derivedDirtyCol"
 				}
 			],
 			"scriptLines": [
@@ -73,8 +83,17 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> JobSource",
-				"source(allowSchemaDrift: false,",
-				"     validateSchema: false) ~> DevTrainSource",
+				"source(output(",
+				"          Education as string,",
+				"          EducationField as string,",
+				"          TrainingTimesLastYear as string,",
+				"          EmployeeName as string,",
+				"          EmployeeDTNumber as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     partitionBy('hash', 1)) ~> DevTrainSource",
 				"EmployeeSource derive(EmployeeName = replace(EmployeeName, \",\", \" \"),",
 				"          EmployeeNumber = replace(EmployeeNumber, \"#\", \"\"),",
 				"          Gender = iif(isNull(Gender), \"LGBT\", replace(Gender, \"Felmeal\", \"Female\")),",
@@ -84,6 +103,12 @@
 				"     partitionBy('hash', 1)) ~> Genderdivide",
 				"JobSource derive(Attrition = iif(Attrition == 'Undefined', iif(OverTime == 'Yes', 'Yes', 'No'), Attrition),",
 				"          BusinessTravel = replace(BusinessTravel, '$%^', '')) ~> derivedDirtyJobCol",
+				"derivedDirtyCol, EmployeeSource lookup(derivedDirtyCol@EmployeeName == EmployeeSource@EmployeeName,",
+				"     multiple: true,",
+				"     partitionBy('hash', 1),",
+				"     broadcast: 'both')~> lookupEmpName",
+				"DevTrainSource derive(EducationField = replace(EducationField, \"ee#$%^&Sciences123\", \" Sciences\"),",
+				"          EmployeeName = replace(EmployeeName, \",\", \" \")) ~> derivedDirtyCol",
 				"derivedDirtyEmpCol sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delimited',",
