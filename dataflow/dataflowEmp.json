@@ -87,6 +87,17 @@
 						"referenceName": "AzureBlobStorageSink",
 						"type": "LinkedServiceReference"
 					}
+				},
+				{
+					"linkedService": {
+						"referenceName": "AzureBlobStorageSink",
+						"type": "LinkedServiceReference"
+					},
+					"name": "LoadENV",
+					"rejectedDataLinkedService": {
+						"referenceName": "AzureBlobStorageSink",
+						"type": "LinkedServiceReference"
+					}
 				}
 			],
 			"transformations": [
@@ -183,7 +194,11 @@
 				"FactDEVTRAIN derive(EducationField = iif(isNull(EducationField), 'Unknown', replace(EducationField, 'ee#$%^&Sciences123', ' Sciences')),",
 				"          TrainingTimesLastYear = iif((TrainingTimesLastYear == 0) || (TrainingTimesLastYear == 1) || (TrainingTimesLastYear == 2) || (TrainingTimesLastYear == 3) || (TrainingTimesLastYear == 4) || (TrainingTimesLastYear == 5) || (TrainingTimesLastYear == 6), TrainingTimesLastYear, 1),",
 				"     partitionBy('hash', 1)) ~> FilterDEVTRAIN",
-				"FactENV derive() ~> FilterENV",
+				"FactENV derive(EnvironmentSatisfaction = substring(EnvironmentSatisfaction, 3),",
+				"          JobInvolvement = substring(JobInvolvement, 2),",
+				"          JobSatisfaction = substring(JobSatisfaction, 3),",
+				"          RelationshipSatisfaction = substring(RelationshipSatisfaction, 3),",
+				"          WorkLifeBalance = substring(WorkLifeBalance, 2)) ~> FilterENV",
 				"FilterEMP sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delimited',",
@@ -248,7 +263,20 @@
 				"     partitionFileNames:['DevTrain_Data.csv'],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     partitionBy('hash', 1)) ~> LoadDEVTRAIN"
+				"     partitionBy('hash', 1)) ~> LoadDEVTRAIN",
+				"FilterENV sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delimited',",
+				"     container: 'containerkiki',",
+				"     folderPath: 'folderkiki_clean',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: true,",
+				"     partitionFileNames:['Environment_Data'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> LoadENV"
 			]
 		}
 	}
