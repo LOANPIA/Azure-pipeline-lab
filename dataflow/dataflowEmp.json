@@ -40,13 +40,6 @@
 						"type": "LinkedServiceReference"
 					},
 					"name": "sinkEmployeeByGender"
-				},
-				{
-					"linkedService": {
-						"referenceName": "AzureBlobStorageSink",
-						"type": "LinkedServiceReference"
-					},
-					"name": "DevTrainmappedbyEmpID"
 				}
 			],
 			"transformations": [
@@ -58,9 +51,6 @@
 				},
 				{
 					"name": "derivedDirtyJobCol"
-				},
-				{
-					"name": "joinwithDevTrain"
 				}
 			],
 			"scriptLines": [
@@ -97,7 +87,7 @@
 				"     allowSchemaDrift: false,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> DevTrainSource",
-				"joinwithDevTrain derive(EmployeeName = replace(EmployeeSource@EmployeeName, \",\", \" \"),",
+				"EmployeeSource derive(EmployeeName = replace(EmployeeSource@EmployeeName, \",\", \" \"),",
 				"          EmployeeNumber = iif(isNull(EmployeeNumber), \"Unknown\", replace(EmployeeNumber, \"#\", \"\")),",
 				"          Gender = iif(isNull(Gender), \"LGBT\", replace(Gender, \"Felmeal\", \"Female\")),",
 				"          MaritalStatus = replace(MaritalStatus, \"Singer\", \"Single\")) ~> derivedDirtyEmpCol",
@@ -106,12 +96,6 @@
 				"     partitionBy('hash', 1)) ~> Genderdivide",
 				"JobSource derive(Attrition = iif(Attrition == 'Undefined', iif(OverTime == 'Yes', 'Yes', 'No'), Attrition),",
 				"          BusinessTravel = replace(BusinessTravel, '$%^', '')) ~> derivedDirtyJobCol",
-				"EmployeeSource, DevTrainSource join(EmployeeNumber == EmployeeDTNumber,",
-				"     joinType:'inner',",
-				"     matchType:'exact',",
-				"     ignoreSpaces: false,",
-				"     partitionBy('hash', 1),",
-				"     broadcast: 'both')~> joinwithDevTrain",
 				"derivedDirtyEmpCol sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delimited',",
@@ -137,18 +121,7 @@
 				"     partitionFileNames:['EmployeeGender_Data.csv'],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     partitionBy('hash', 1)) ~> sinkEmployeeByGender",
-				"joinwithDevTrain sink(allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     format: 'delimited',",
-				"     container: 'containerkiki',",
-				"     folderPath: 'folderkiki_clean',",
-				"     columnDelimiter: ',',",
-				"     escapeChar: '\\\\',",
-				"     quoteChar: '\\\"',",
-				"     columnNamesAsHeader: false,",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> DevTrainmappedbyEmpID"
+				"     partitionBy('hash', 1)) ~> sinkEmployeeByGender"
 			]
 		}
 	}
