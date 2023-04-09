@@ -106,7 +106,7 @@
 				"     partitionBy('hash', 1)) ~> Genderdivide",
 				"JobSource derive(Attrition = iif(Attrition == 'Undefined', iif(OverTime == 'Yes', 'Yes', 'No'), Attrition),",
 				"          BusinessTravel = replace(BusinessTravel, '$%^', '')) ~> derivedDirtyJobCol",
-				"EmployeeSource, DevTrainSource join(EmployeeSource@EmployeeName == DevTrainSource@EmployeeName,",
+				"EmployeeSource, DevTrainSource join(EmployeeNumber == EmployeeDTNumber,",
 				"     joinType:'inner',",
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
