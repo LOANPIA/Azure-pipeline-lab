@@ -51,6 +51,12 @@
 				},
 				{
 					"name": "derivedDirtyJobCol"
+				},
+				{
+					"name": "lookupNameEmp"
+				},
+				{
+					"name": "derivedDirtyDTCol"
 				}
 			],
 			"scriptLines": [
@@ -97,6 +103,13 @@
 				"     partitionBy('hash', 1)) ~> Genderdivide",
 				"JobSource derive(Attrition = iif(Attrition == 'Undefined', iif(OverTime == 'Yes', 'Yes', 'No'), Attrition),",
 				"          BusinessTravel = replace(BusinessTravel, '$%^', '')) ~> derivedDirtyJobCol",
+				"derivedDirtyDTCol, derivedDirtyEmpCol lookup(derivedDirtyDTCol@EmployeeName == derivedDirtyEmpCol@EmployeeName,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     partitionBy('hash', 1),",
+				"     broadcast: 'both')~> lookupNameEmp",
+				"DevTrainSource derive(EmployeeName = replace(EmployeeName, \",\", \" \"),",
+				"     partitionBy('hash', 1)) ~> derivedDirtyDTCol",
 				"derivedDirtyEmpCol sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delimited',",
