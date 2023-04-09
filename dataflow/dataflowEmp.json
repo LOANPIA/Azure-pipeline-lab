@@ -19,10 +19,6 @@
 					"name": "JobSource"
 				},
 				{
-					"dataset": {
-						"referenceName": "DevTrainDS",
-						"type": "DatasetReference"
-					},
 					"name": "DevTrainSource"
 				}
 			],
@@ -53,7 +49,7 @@
 					"name": "derivedDirtyJobCol"
 				},
 				{
-					"name": "selectEmpNumber"
+					"name": "joinwithDevTrain"
 				}
 			],
 			"scriptLines": [
@@ -80,16 +76,9 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> JobSource",
-				"source(output(",
-				"          Education as string,",
-				"          EducationField as string,",
-				"          TrainingTimesLastYear as string,",
-				"          EmployeeDTNumber as integer",
-				"     ),",
-				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> DevTrainSource",
-				"selectEmpNumber derive(EmployeeName = replace(EmployeeName, \",\", \" \"),",
+				"source(allowSchemaDrift: false,",
+				"     validateSchema: false) ~> DevTrainSource",
+				"joinwithDevTrain derive(EmployeeName = replace(EmployeeName, \",\", \" \"),",
 				"          EmployeeNumber = iif(isNull(EmployeeNumber), \"Unknown\", replace(EmployeeNumber, \"#\", \"\")),",
 				"          Gender = iif(isNull(Gender), \"LGBT\", replace(Gender, \"Felmeal\", \"Female\")),",
 				"          MaritalStatus = replace(MaritalStatus, \"Singer\", \"Single\")) ~> derivedDirtyEmpCol",
@@ -98,13 +87,11 @@
 				"     partitionBy('hash', 1)) ~> Genderdivide",
 				"JobSource derive(Attrition = iif(Attrition == 'Undefined', iif(OverTime == 'Yes', 'Yes', 'No'), Attrition),",
 				"          BusinessTravel = replace(BusinessTravel, '$%^', '')) ~> derivedDirtyJobCol",
-				"EmployeeSource select(mapColumn(",
-				"          EmployeeNumber,",
-				"          EmployeeName",
-				"     ),",
-				"     partitionBy('hash', 1),",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> selectEmpNumber",
+				"EmployeeSource, DevTrainSource join(EmployeeName == ERROR_FUNCTION(''),",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> joinwithDevTrain",
 				"derivedDirtyEmpCol sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delimited',",
