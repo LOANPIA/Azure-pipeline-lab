@@ -17,6 +17,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "JobSource"
+				},
+				{
+					"dataset": {
+						"referenceName": "DevTrainDS",
+						"type": "DatasetReference"
+					},
+					"name": "DevTrainSource"
 				}
 			],
 			"sinks": [
@@ -44,6 +51,9 @@
 				},
 				{
 					"name": "derivedDirtyJobCol"
+				},
+				{
+					"name": "lookupEmpNumber"
 				}
 			],
 			"scriptLines": [
@@ -70,6 +80,15 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> JobSource",
+				"source(output(",
+				"          Education as string,",
+				"          EducationField as string,",
+				"          TrainingTimesLastYear as string,",
+				"          EmployeeDTNumber as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DevTrainSource",
 				"EmployeeSource derive(EmployeeName = replace(EmployeeName, \",\", \" \"),",
 				"          EmployeeNumber = iif(isNull(EmployeeNumber), \"Unknown\", replace(EmployeeNumber, \"#\", \"\")),",
 				"          Gender = iif(isNull(Gender), \"LGBT\", replace(Gender, \"Felmeal\", \"Female\")),",
@@ -79,6 +98,10 @@
 				"     partitionBy('hash', 1)) ~> Genderdivide",
 				"JobSource derive(Attrition = iif(Attrition == 'Undefined', iif(OverTime == 'Yes', 'Yes', 'No'), Attrition),",
 				"          BusinessTravel = replace(BusinessTravel, '$%^', '')) ~> derivedDirtyJobCol",
+				"DevTrainSource, EmployeeSource lookup(ERROR_FUNCTION('') == ERROR_FUNCTION(''),",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> lookupEmpNumber",
 				"derivedDirtyEmpCol sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delimited',",

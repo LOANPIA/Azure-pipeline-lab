@@ -31,6 +31,10 @@
 			{
 				"name": "TrainingTimesLastYear",
 				"type": "String"
+			},
+			{
+				"name": "EmployeeDTNumber",
+				"type": "String"
 			}
 		]
 	}
