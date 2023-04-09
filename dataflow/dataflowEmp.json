@@ -19,10 +19,6 @@
 					"name": "JobSource"
 				},
 				{
-					"dataset": {
-						"referenceName": "DevTrainingDS",
-						"type": "DatasetReference"
-					},
 					"name": "DevTrainSource"
 				}
 			],
@@ -77,16 +73,8 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> JobSource",
-				"source(output(",
-				"          Education as string,",
-				"          EducationField as string,",
-				"          TrainingTimesLastYear as string,",
-				"          EmployeeName as string,",
-				"          EmployeeDTNumber as integer",
-				"     ),",
-				"     allowSchemaDrift: false,",
-				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> DevTrainSource",
+				"source(allowSchemaDrift: false,",
+				"     validateSchema: false) ~> DevTrainSource",
 				"EmployeeSource derive(EmployeeName = replace(EmployeeName, \",\", \" \"),",
 				"          EmployeeNumber = replace(EmployeeNumber, \"#\", \"\"),",
 				"          Gender = iif(isNull(Gender), \"LGBT\", replace(Gender, \"Felmeal\", \"Female\")),",
