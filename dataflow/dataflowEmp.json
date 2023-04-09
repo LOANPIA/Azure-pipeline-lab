@@ -31,6 +31,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "FactDEVTRAIN"
+				},
+				{
+					"dataset": {
+						"referenceName": "EnvironmentDS",
+						"type": "DatasetReference"
+					},
+					"name": "FactENV"
 				}
 			],
 			"sinks": [
@@ -69,6 +76,17 @@
 						"referenceName": "AzureBlobStorageSink",
 						"type": "LinkedServiceReference"
 					}
+				},
+				{
+					"linkedService": {
+						"referenceName": "AzureBlobStorageSink",
+						"type": "LinkedServiceReference"
+					},
+					"name": "LoadDEVTRAIN",
+					"rejectedDataLinkedService": {
+						"referenceName": "AzureBlobStorageSink",
+						"type": "LinkedServiceReference"
+					}
 				}
 			],
 			"transformations": [
@@ -86,6 +104,9 @@
 				},
 				{
 					"name": "FilterDEVTRAIN"
+				},
+				{
+					"name": "FilterENV"
 				}
 			],
 			"scriptLines": [
@@ -132,6 +153,17 @@
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
 				"     partitionBy('hash', 1)) ~> FactDEVTRAIN",
+				"source(output(",
+				"          EnvironmentSatisfaction as string,",
+				"          JobInvolvement as string,",
+				"          JobSatisfaction as string,",
+				"          RelationshipSatisfaction as string,",
+				"          WorkLifeBalance as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     partitionBy('hash', 1)) ~> FactENV",
 				"DimEmployee derive(EmployeeName = replace(EmployeeName, \",\", \" \"),",
 				"          EmployeeNumber = replace(EmployeeNumber, \"#\", \"\"),",
 				"          Gender = iif(isNull(Gender), \"LGBT\", replace(Gender, \"Felmeal\", \"Female\")),",
@@ -151,6 +183,7 @@
 				"FactDEVTRAIN derive(EducationField = iif(isNull(EducationField), 'Unknown', replace(EducationField, 'ee#$%^&Sciences123', ' Sciences')),",
 				"          TrainingTimesLastYear = iif((TrainingTimesLastYear == 0) || (TrainingTimesLastYear == 1) || (TrainingTimesLastYear == 2) || (TrainingTimesLastYear == 3) || (TrainingTimesLastYear == 4) || (TrainingTimesLastYear == 5) || (TrainingTimesLastYear == 6), TrainingTimesLastYear, 1),",
 				"     partitionBy('hash', 1)) ~> FilterDEVTRAIN",
+				"FactENV derive() ~> FilterENV",
 				"FilterEMP sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delimited',",
@@ -202,7 +235,20 @@
 				"     partitionFileNames:['Income_Data.csv'],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     partitionBy('hash', 1)) ~> LoadINCOME"
+				"     partitionBy('hash', 1)) ~> LoadINCOME",
+				"FilterDEVTRAIN sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delimited',",
+				"     container: 'containerkiki',",
+				"     folderPath: 'folderkiki_clean',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: true,",
+				"     partitionFileNames:['DevTrain_Data.csv'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> LoadDEVTRAIN"
 			]
 		}
 	}
