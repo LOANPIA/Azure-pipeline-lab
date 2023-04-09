@@ -40,6 +40,13 @@
 						"type": "LinkedServiceReference"
 					},
 					"name": "sinkEmployeeByGender"
+				},
+				{
+					"linkedService": {
+						"referenceName": "AzureBlobStorageSink",
+						"type": "LinkedServiceReference"
+					},
+					"name": "DevTrainmappedbyEmpID"
 				}
 			],
 			"transformations": [
@@ -85,7 +92,7 @@
 				"          EducationField as string,",
 				"          TrainingTimesLastYear as string,",
 				"          EmployeeName as string,",
-				"          EmployeeDTNumber as string",
+				"          EmployeeDTNumber as integer",
 				"     ),",
 				"     allowSchemaDrift: false,",
 				"     validateSchema: false,",
@@ -99,11 +106,12 @@
 				"     partitionBy('hash', 1)) ~> Genderdivide",
 				"JobSource derive(Attrition = iif(Attrition == 'Undefined', iif(OverTime == 'Yes', 'Yes', 'No'), Attrition),",
 				"          BusinessTravel = replace(BusinessTravel, '$%^', '')) ~> derivedDirtyJobCol",
-				"EmployeeSource, DevTrainSource join(EmployeeSource@EmployeeName == ERROR_FUNCTION(''),",
+				"EmployeeSource, DevTrainSource join(EmployeeSource@EmployeeName == DevTrainSource@EmployeeName,",
 				"     joinType:'inner',",
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
-				"     broadcast: 'auto')~> joinwithDevTrain",
+				"     partitionBy('hash', 1),",
+				"     broadcast: 'both')~> joinwithDevTrain",
 				"derivedDirtyEmpCol sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delimited',",
@@ -129,7 +137,18 @@
 				"     partitionFileNames:['EmployeeGender_Data.csv'],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     partitionBy('hash', 1)) ~> sinkEmployeeByGender"
+				"     partitionBy('hash', 1)) ~> sinkEmployeeByGender",
+				"joinwithDevTrain sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delimited',",
+				"     container: 'containerkiki',",
+				"     folderPath: 'folderkiki_clean',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> DevTrainmappedbyEmpID"
 			]
 		}
 	}
