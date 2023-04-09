@@ -126,7 +126,7 @@
 				"source(output(",
 				"          Education as string,",
 				"          EducationField as string,",
-				"          TrainingTimesLastYear as string",
+				"          TrainingTimesLastYear as integer",
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
