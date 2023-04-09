@@ -21,15 +21,15 @@
 		},
 		"schema": [
 			{
-				"name": "2",
+				"name": "Education",
 				"type": "String"
 			},
 			{
-				"name": "Life Sciences",
+				"name": "EducationField",
 				"type": "String"
 			},
 			{
-				"name": "0",
+				"name": "TrainingTimesLastYear",
 				"type": "String"
 			}
 		]

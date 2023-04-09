@@ -17,6 +17,20 @@
 						"type": "DatasetReference"
 					},
 					"name": "FactJOB"
+				},
+				{
+					"dataset": {
+						"referenceName": "IncomeDS",
+						"type": "DatasetReference"
+					},
+					"name": "FactINCOME"
+				},
+				{
+					"dataset": {
+						"referenceName": "DevTrainDS",
+						"type": "DatasetReference"
+					},
+					"name": "FactDEVTRAIN"
 				}
 			],
 			"sinks": [
@@ -44,6 +58,17 @@
 						"referenceName": "AzureBlobStorageSink",
 						"type": "LinkedServiceReference"
 					}
+				},
+				{
+					"linkedService": {
+						"referenceName": "AzureBlobStorageSink",
+						"type": "LinkedServiceReference"
+					},
+					"name": "LoadINCOME",
+					"rejectedDataLinkedService": {
+						"referenceName": "AzureBlobStorageSink",
+						"type": "LinkedServiceReference"
+					}
 				}
 			],
 			"transformations": [
@@ -55,6 +80,12 @@
 				},
 				{
 					"name": "FilterJOB"
+				},
+				{
+					"name": "FilterINCOME"
+				},
+				{
+					"name": "FilterDEVTRAIN"
 				}
 			],
 			"scriptLines": [
@@ -81,6 +112,26 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> FactJOB",
+				"source(output(",
+				"          DailyRate as string,",
+				"          HourlyRate as short,",
+				"          MonthlyIncome as string,",
+				"          PercentSalaryHike as string,",
+				"          Employee_Salary_Number as short",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     partitionBy('hash', 1)) ~> FactINCOME",
+				"source(output(",
+				"          Education as string,",
+				"          EducationField as string,",
+				"          TrainingTimesLastYear as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     partitionBy('hash', 1)) ~> FactDEVTRAIN",
 				"DimEmployee derive(EmployeeName = replace(EmployeeName, \",\", \" \"),",
 				"          EmployeeNumber = replace(EmployeeNumber, \"#\", \"\"),",
 				"          Gender = iif(isNull(Gender), \"LGBT\", replace(Gender, \"Felmeal\", \"Female\")),",
@@ -93,6 +144,13 @@
 				"          Department = replace(Department, ', Dev', '& Development'),",
 				"          JobLevel = iif((JobLevel == 1) || (JobLevel == 2) || (JobLevel == 3) || (JobLevel == 4) || (JobLevel == 5), JobLevel, 1),",
 				"     partitionBy('hash', 1)) ~> FilterJOB",
+				"FactINCOME derive(DailyRate = replace(DailyRate, 'o', '0'),",
+				"          MonthlyIncome = replace(MonthlyIncome, '$', ''),",
+				"          PercentSalaryHike = replace(PercentSalaryHike, '%', ''),",
+				"     partitionBy('hash', 1)) ~> FilterINCOME",
+				"FactDEVTRAIN derive(EducationField = iif(isNull(EducationField), 'Unknown', replace(EducationField, 'ee#$%^&Sciences123', ' Sciences')),",
+				"          TrainingTimesLastYear = iif((TrainingTimesLastYear == 0) || (TrainingTimesLastYear == 1) || (TrainingTimesLastYear == 2) || (TrainingTimesLastYear == 3) || (TrainingTimesLastYear == 4) || (TrainingTimesLastYear == 5) || (TrainingTimesLastYear == 6), TrainingTimesLastYear, 1),",
+				"     partitionBy('hash', 1)) ~> FilterDEVTRAIN",
 				"FilterEMP sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delimited',",
@@ -131,7 +189,20 @@
 				"     partitionFileNames:['Job_Data.csv'],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     partitionBy('hash', 1)) ~> LoadJOB"
+				"     partitionBy('hash', 1)) ~> LoadJOB",
+				"FilterINCOME sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delimited',",
+				"     container: 'containerkiki',",
+				"     folderPath: 'folderkiki_clean',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: true,",
+				"     partitionFileNames:['Income_Data.csv'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> LoadINCOME"
 			]
 		}
 	}
