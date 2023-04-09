@@ -35,6 +35,10 @@
 			{
 				"name": "EmployeeName",
 				"type": "String"
+			},
+			{
+				"name": "EmployeeDTNumber",
+				"type": "String"
 			}
 		]
 	}

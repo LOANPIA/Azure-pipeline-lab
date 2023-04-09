@@ -19,6 +19,10 @@
 					"name": "JobSource"
 				},
 				{
+					"dataset": {
+						"referenceName": "DevTrainingDS",
+						"type": "DatasetReference"
+					},
 					"name": "DevTrainSource"
 				}
 			],
@@ -76,9 +80,17 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> JobSource",
-				"source(allowSchemaDrift: false,",
-				"     validateSchema: false) ~> DevTrainSource",
-				"joinwithDevTrain derive(EmployeeName = replace(EmployeeName, \",\", \" \"),",
+				"source(output(",
+				"          Education as string,",
+				"          EducationField as string,",
+				"          TrainingTimesLastYear as string,",
+				"          EmployeeName as string,",
+				"          EmployeeDTNumber as string",
+				"     ),",
+				"     allowSchemaDrift: false,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DevTrainSource",
+				"joinwithDevTrain derive(EmployeeName = replace(EmployeeSource@EmployeeName, \",\", \" \"),",
 				"          EmployeeNumber = iif(isNull(EmployeeNumber), \"Unknown\", replace(EmployeeNumber, \"#\", \"\")),",
 				"          Gender = iif(isNull(Gender), \"LGBT\", replace(Gender, \"Felmeal\", \"Female\")),",
 				"          MaritalStatus = replace(MaritalStatus, \"Singer\", \"Single\")) ~> derivedDirtyEmpCol",
@@ -87,7 +99,7 @@
 				"     partitionBy('hash', 1)) ~> Genderdivide",
 				"JobSource derive(Attrition = iif(Attrition == 'Undefined', iif(OverTime == 'Yes', 'Yes', 'No'), Attrition),",
 				"          BusinessTravel = replace(BusinessTravel, '$%^', '')) ~> derivedDirtyJobCol",
-				"EmployeeSource, DevTrainSource join(EmployeeName == ERROR_FUNCTION(''),",
+				"EmployeeSource, DevTrainSource join(EmployeeSource@EmployeeName == ERROR_FUNCTION(''),",
 				"     joinType:'inner',",
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
