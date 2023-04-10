@@ -1,5 +1,5 @@
 {
-	"name": "DiffDS",
+	"name": "PerformanceDS",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "AzureBlobStorageLS",
@@ -10,7 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": "Diff#_Dirty.csv",
+				"fileName": "Performance_Dirty.csv",
 				"folderPath": "folderkiki_dirty",
 				"container": "containerkiki"
 			},

@@ -9,14 +9,49 @@
 						"referenceName": "EmpDS",
 						"type": "DatasetReference"
 					},
-					"name": "EmployeeSource"
+					"name": "DimEmployee"
 				},
 				{
 					"dataset": {
 						"referenceName": "JobDS",
 						"type": "DatasetReference"
 					},
-					"name": "JobSource"
+					"name": "FactJOB"
+				},
+				{
+					"dataset": {
+						"referenceName": "IncomeDS",
+						"type": "DatasetReference"
+					},
+					"name": "FactINCOME"
+				},
+				{
+					"dataset": {
+						"referenceName": "DevTrainDS",
+						"type": "DatasetReference"
+					},
+					"name": "FactDEVTRAIN"
+				},
+				{
+					"dataset": {
+						"referenceName": "EnvironmentDS",
+						"type": "DatasetReference"
+					},
+					"name": "FactENV"
+				},
+				{
+					"dataset": {
+						"referenceName": "WorktimeDS",
+						"type": "DatasetReference"
+					},
+					"name": "FactWORKTIME"
+				},
+				{
+					"dataset": {
+						"referenceName": "PerformanceDS",
+						"type": "DatasetReference"
+					},
+					"name": "FactPERFORMANCE"
 				}
 			],
 			"sinks": [
@@ -25,25 +60,106 @@
 						"referenceName": "AzureBlobStorageSink",
 						"type": "LinkedServiceReference"
 					},
-					"name": "sinkEmp"
+					"name": "LoadEMP"
 				},
 				{
 					"linkedService": {
 						"referenceName": "AzureBlobStorageSink",
 						"type": "LinkedServiceReference"
 					},
-					"name": "sinkEmployeeByGender"
+					"name": "LoadStats"
+				},
+				{
+					"linkedService": {
+						"referenceName": "AzureBlobStorageSink",
+						"type": "LinkedServiceReference"
+					},
+					"name": "LoadJOB",
+					"rejectedDataLinkedService": {
+						"referenceName": "AzureBlobStorageSink",
+						"type": "LinkedServiceReference"
+					}
+				},
+				{
+					"linkedService": {
+						"referenceName": "AzureBlobStorageSink",
+						"type": "LinkedServiceReference"
+					},
+					"name": "LoadINCOME",
+					"rejectedDataLinkedService": {
+						"referenceName": "AzureBlobStorageSink",
+						"type": "LinkedServiceReference"
+					}
+				},
+				{
+					"linkedService": {
+						"referenceName": "AzureBlobStorageSink",
+						"type": "LinkedServiceReference"
+					},
+					"name": "LoadDEVTRAIN",
+					"rejectedDataLinkedService": {
+						"referenceName": "AzureBlobStorageSink",
+						"type": "LinkedServiceReference"
+					}
+				},
+				{
+					"linkedService": {
+						"referenceName": "AzureBlobStorageSink",
+						"type": "LinkedServiceReference"
+					},
+					"name": "LoadENV",
+					"rejectedDataLinkedService": {
+						"referenceName": "AzureBlobStorageSink",
+						"type": "LinkedServiceReference"
+					}
+				},
+				{
+					"linkedService": {
+						"referenceName": "AzureBlobStorageSink",
+						"type": "LinkedServiceReference"
+					},
+					"name": "loadWORKTIME",
+					"rejectedDataLinkedService": {
+						"referenceName": "AzureBlobStorageSink",
+						"type": "LinkedServiceReference"
+					}
+				},
+				{
+					"linkedService": {
+						"referenceName": "AzureBlobStorageSink",
+						"type": "LinkedServiceReference"
+					},
+					"name": "LoadPERFORMANCE",
+					"rejectedDataLinkedService": {
+						"referenceName": "AzureBlobStorageSink",
+						"type": "LinkedServiceReference"
+					}
 				}
 			],
 			"transformations": [
 				{
-					"name": "derivedDirtyEmpCol"
+					"name": "FilterEMP"
 				},
 				{
 					"name": "Genderdivide"
 				},
 				{
-					"name": "derivedDirtyJobCol"
+					"name": "FilterJOB"
+				},
+				{
+					"name": "FilterINCOME"
+				},
+				{
+					"name": "FilterDEVTRAIN"
+				},
+				{
+					"name": "FilterENV"
+				},
+				{
+					"name": "FilterWORKTIME"
+				},
+				{
+					"name": "FilterPERFORMANCE"
 				}
 			],
 			"scriptLines": [
@@ -57,29 +173,106 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
-				"     partitionBy('hash', 1)) ~> EmployeeSource",
+				"     partitionBy('hash', 1)) ~> DimEmployee",
 				"source(output(",
 				"          Attrition as string,",
 				"          BusinessTravel as string,",
 				"          Department as string,",
-				"          JobLevel as string,",
+				"          JobLevel as integer,",
 				"          JobRole as string,",
 				"          NumCompaniesWorked as string,",
 				"          OverTime as string",
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> JobSource",
-				"EmployeeSource derive(EmployeeName = replace(EmployeeName, \",\", \" \"),",
-				"          EmployeeNumber = iif(isNull(EmployeeNumber), \"Unknown\", replace(EmployeeNumber, \"#\", \"\")),",
+				"     ignoreNoFilesFound: false) ~> FactJOB",
+				"source(output(",
+				"          DailyRate as string,",
+				"          HourlyRate as short,",
+				"          MonthlyIncome as string,",
+				"          PercentSalaryHike as string,",
+				"          Employee_Salary_Number as short",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     partitionBy('hash', 1)) ~> FactINCOME",
+				"source(output(",
+				"          Education as string,",
+				"          EducationField as string,",
+				"          TrainingTimesLastYear as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     partitionBy('hash', 1)) ~> FactDEVTRAIN",
+				"source(output(",
+				"          EnvironmentSatisfaction as string,",
+				"          JobInvolvement as string,",
+				"          JobSatisfaction as string,",
+				"          RelationshipSatisfaction as string,",
+				"          WorkLifeBalance as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     partitionBy('hash', 1)) ~> FactENV",
+				"source(output(",
+				"          StandardHours as string,",
+				"          TotalWorkingYears as string,",
+				"          YearsAtCompany as string,",
+				"          YearsInCurrentRole as string,",
+				"          YearsSinceLastPromotion as integer,",
+				"          YearsWithCurrManager as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     partitionBy('hash', 1)) ~> FactWORKTIME",
+				"source(output(",
+				"          DistanceFromHome as string,",
+				"          PerformanceRating as string,",
+				"          StockOptionLevel as integer,",
+				"          MonthlyRate as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     partitionBy('hash', 1)) ~> FactPERFORMANCE",
+				"DimEmployee derive(EmployeeName = replace(EmployeeName, \",\", \" \"),",
+				"          EmployeeNumber = replace(EmployeeNumber, \"#\", \"\"),",
 				"          Gender = iif(isNull(Gender), \"LGBT\", replace(Gender, \"Felmeal\", \"Female\")),",
-				"          MaritalStatus = replace(MaritalStatus, \"Singer\", \"Single\")) ~> derivedDirtyEmpCol",
-				"derivedDirtyEmpCol aggregate(groupBy(Gender),",
+				"          MaritalStatus = replace(MaritalStatus, \"Singer\", \"Single\")) ~> FilterEMP",
+				"FilterEMP aggregate(groupBy(Gender),",
 				"     EmployeeByGender = count(),",
 				"     partitionBy('hash', 1)) ~> Genderdivide",
-				"JobSource derive(Attrition = iif(Attrition == 'Undefined', iif(OverTime == 'Yes', 'Yes', 'No'), Attrition),",
-				"          BusinessTravel = replace(BusinessTravel, '$%^', '')) ~> derivedDirtyJobCol",
-				"derivedDirtyEmpCol sink(allowSchemaDrift: true,",
+				"FactJOB derive(Attrition = iif(Attrition == 'Undefined', iif(OverTime == 'Yes', 'Yes', 'No'), Attrition),",
+				"          BusinessTravel = replace(BusinessTravel, '$%^', ''),",
+				"          Department = replace(Department, ', Dev', '& Development'),",
+				"          JobLevel = iif((JobLevel == 1) || (JobLevel == 2) || (JobLevel == 3) || (JobLevel == 4) || (JobLevel == 5), JobLevel, 1),",
+				"     partitionBy('hash', 1)) ~> FilterJOB",
+				"FactINCOME derive(DailyRate = replace(DailyRate, 'o', '0'),",
+				"          MonthlyIncome = replace(MonthlyIncome, '$', ''),",
+				"          PercentSalaryHike = replace(PercentSalaryHike, '%', ''),",
+				"     partitionBy('hash', 1)) ~> FilterINCOME",
+				"FactDEVTRAIN derive(EducationField = iif(isNull(EducationField), 'Unknown', replace(EducationField, 'ee#$%^&Sciences123', ' Sciences')),",
+				"          TrainingTimesLastYear = iif((TrainingTimesLastYear == 0) || (TrainingTimesLastYear == 1) || (TrainingTimesLastYear == 2) || (TrainingTimesLastYear == 3) || (TrainingTimesLastYear == 4) || (TrainingTimesLastYear == 5) || (TrainingTimesLastYear == 6), TrainingTimesLastYear, 1),",
+				"     partitionBy('hash', 1)) ~> FilterDEVTRAIN",
+				"FactENV derive(EnvironmentSatisfaction = substring(EnvironmentSatisfaction, 3),",
+				"          JobInvolvement = substring(JobInvolvement, 2),",
+				"          JobSatisfaction = substring(JobSatisfaction, 3),",
+				"          RelationshipSatisfaction = substring(RelationshipSatisfaction, 3),",
+				"          WorkLifeBalance = substring(WorkLifeBalance, 2)) ~> FilterENV",
+				"FactWORKTIME derive(StandardHours = toInteger(80),",
+				"          TotalWorkingYears = toInteger(TotalWorkingYears),",
+				"          YearsAtCompany = toInteger(YearsAtCompany),",
+				"          YearsSinceLastPromotion = iif(YearsSinceLastPromotion < 0, 0, YearsSinceLastPromotion)) ~> FilterWORKTIME",
+				"FactPERFORMANCE derive(DistanceFromHome = toInteger(DistanceFromHome),",
+				"          PerformanceRating = replace(PerformanceRating, '3.7%3', 'Unknown'),",
+				"          StockOptionLevel = iif((StockOptionLevel == 0) || (StockOptionLevel == 1) || (StockOptionLevel == 2) || (StockOptionLevel == 3), StockOptionLevel, 1),",
+				"          MonthlyRate = toInteger(MonthlyRate),",
+				"     partitionBy('hash', 1)) ~> FilterPERFORMANCE",
+				"FilterEMP sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delimited',",
 				"     container: 'containerkiki',",
@@ -91,7 +284,7 @@
 				"     partitionFileNames:['Employee_Data.csv'],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     partitionBy('hash', 1)) ~> sinkEmp",
+				"     partitionBy('hash', 1)) ~> LoadEMP",
 				"Genderdivide sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delimited',",
@@ -104,7 +297,85 @@
 				"     partitionFileNames:['EmployeeGender_Data.csv'],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     partitionBy('hash', 1)) ~> sinkEmployeeByGender"
+				"     partitionBy('hash', 1)) ~> LoadStats",
+				"FilterJOB sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delimited',",
+				"     container: 'containerkiki',",
+				"     folderPath: 'folderkiki_clean',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: true,",
+				"     partitionFileNames:['Job_Data.csv'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> LoadJOB",
+				"FilterINCOME sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delimited',",
+				"     container: 'containerkiki',",
+				"     folderPath: 'folderkiki_clean',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: true,",
+				"     partitionFileNames:['Income_Data.csv'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> LoadINCOME",
+				"FilterDEVTRAIN sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delimited',",
+				"     container: 'containerkiki',",
+				"     folderPath: 'folderkiki_clean',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: true,",
+				"     partitionFileNames:['DevTrain_Data.csv'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> LoadDEVTRAIN",
+				"FilterENV sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delimited',",
+				"     container: 'containerkiki',",
+				"     folderPath: 'folderkiki_clean',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: true,",
+				"     partitionFileNames:['Environment_Data'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> LoadENV",
+				"FilterWORKTIME sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delimited',",
+				"     container: 'containerkiki',",
+				"     folderPath: 'folderkiki_clean',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: true,",
+				"     partitionFileNames:['Worktime_Data.csv'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> loadWORKTIME",
+				"FilterPERFORMANCE sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delimited',",
+				"     container: 'containerkiki',",
+				"     folderPath: 'folderkiki_clean',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: true,",
+				"     partitionFileNames:['Performance_Data.csv'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> LoadPERFORMANCE"
 			]
 		}
 	}
