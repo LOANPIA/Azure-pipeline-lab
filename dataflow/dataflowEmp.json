@@ -123,6 +123,17 @@
 						"referenceName": "AzureBlobStorageSink",
 						"type": "LinkedServiceReference"
 					}
+				},
+				{
+					"linkedService": {
+						"referenceName": "AzureBlobStorageSink",
+						"type": "LinkedServiceReference"
+					},
+					"name": "LoadPERFORMANCE",
+					"rejectedDataLinkedService": {
+						"referenceName": "AzureBlobStorageSink",
+						"type": "LinkedServiceReference"
+					}
 				}
 			],
 			"transformations": [
@@ -221,7 +232,7 @@
 				"source(output(",
 				"          DistanceFromHome as string,",
 				"          PerformanceRating as string,",
-				"          StockOptionLevel as string,",
+				"          StockOptionLevel as integer,",
 				"          MonthlyRate as string",
 				"     ),",
 				"     allowSchemaDrift: true,",
@@ -257,7 +268,10 @@
 				"          YearsAtCompany = toInteger(YearsAtCompany),",
 				"          YearsSinceLastPromotion = iif(YearsSinceLastPromotion < 0, 0, YearsSinceLastPromotion)) ~> FilterWORKTIME",
 				"FactPERFORMANCE derive(DistanceFromHome = toInteger(DistanceFromHome),",
-				"          PerformanceRating = iif(like(PerformanceRating, '%[%]%'), 'Unknown', replace(PerformanceRating, '%', 'Unknown'))) ~> FilterPERFORMANCE",
+				"          PerformanceRating = replace(PerformanceRating, '3.7%3', 'Unknown'),",
+				"          StockOptionLevel = iif((StockOptionLevel == 0) || (StockOptionLevel == 1) || (StockOptionLevel == 2) || (StockOptionLevel == 3), StockOptionLevel, 1),",
+				"          MonthlyRate = toInteger(MonthlyRate),",
+				"     partitionBy('hash', 1)) ~> FilterPERFORMANCE",
 				"FilterEMP sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delimited',",
@@ -348,7 +362,20 @@
 				"     partitionFileNames:['Worktime_Data.csv'],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     partitionBy('hash', 1)) ~> loadWORKTIME"
+				"     partitionBy('hash', 1)) ~> loadWORKTIME",
+				"FilterPERFORMANCE sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delimited',",
+				"     container: 'containerkiki',",
+				"     folderPath: 'folderkiki_clean',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: true,",
+				"     partitionFileNames:['Performance_Data.csv'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> LoadPERFORMANCE"
 			]
 		}
 	}
