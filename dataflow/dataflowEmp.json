@@ -38,6 +38,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "FactENV"
+				},
+				{
+					"dataset": {
+						"referenceName": "WorktimeDS",
+						"type": "DatasetReference"
+					},
+					"name": "FactWORKTIME"
 				}
 			],
 			"sinks": [
@@ -98,6 +105,17 @@
 						"referenceName": "AzureBlobStorageSink",
 						"type": "LinkedServiceReference"
 					}
+				},
+				{
+					"linkedService": {
+						"referenceName": "AzureBlobStorageSink",
+						"type": "LinkedServiceReference"
+					},
+					"name": "loadWORKTIME",
+					"rejectedDataLinkedService": {
+						"referenceName": "AzureBlobStorageSink",
+						"type": "LinkedServiceReference"
+					}
 				}
 			],
 			"transformations": [
@@ -118,6 +136,9 @@
 				},
 				{
 					"name": "FilterENV"
+				},
+				{
+					"name": "FilterWORKTIME"
 				}
 			],
 			"scriptLines": [
@@ -175,6 +196,18 @@
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
 				"     partitionBy('hash', 1)) ~> FactENV",
+				"source(output(",
+				"          StandardHours as string,",
+				"          TotalWorkingYears as string,",
+				"          YearsAtCompany as string,",
+				"          YearsInCurrentRole as string,",
+				"          YearsSinceLastPromotion as integer,",
+				"          YearsWithCurrManager as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     partitionBy('hash', 1)) ~> FactWORKTIME",
 				"DimEmployee derive(EmployeeName = replace(EmployeeName, \",\", \" \"),",
 				"          EmployeeNumber = replace(EmployeeNumber, \"#\", \"\"),",
 				"          Gender = iif(isNull(Gender), \"LGBT\", replace(Gender, \"Felmeal\", \"Female\")),",
@@ -199,6 +232,10 @@
 				"          JobSatisfaction = substring(JobSatisfaction, 3),",
 				"          RelationshipSatisfaction = substring(RelationshipSatisfaction, 3),",
 				"          WorkLifeBalance = substring(WorkLifeBalance, 2)) ~> FilterENV",
+				"FactWORKTIME derive(StandardHours = toInteger(80),",
+				"          TotalWorkingYears = toInteger(TotalWorkingYears),",
+				"          YearsAtCompany = toInteger(YearsAtCompany),",
+				"          YearsSinceLastPromotion = iif(YearsSinceLastPromotion < 0, 0, YearsSinceLastPromotion)) ~> FilterWORKTIME",
 				"FilterEMP sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delimited',",
@@ -276,7 +313,20 @@
 				"     partitionFileNames:['Environment_Data'],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     partitionBy('hash', 1)) ~> LoadENV"
+				"     partitionBy('hash', 1)) ~> LoadENV",
+				"FilterWORKTIME sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delimited',",
+				"     container: 'containerkiki',",
+				"     folderPath: 'folderkiki_clean',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: true,",
+				"     partitionFileNames:['Worktime_Data.csv'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> loadWORKTIME"
 			]
 		}
 	}
