@@ -21,19 +21,19 @@
 		},
 		"schema": [
 			{
-				"name": "0.2230567621811197",
+				"name": "DistanceFromHome",
 				"type": "String"
 			},
 			{
-				"name": "3",
+				"name": "PerformanceRating",
 				"type": "String"
 			},
 			{
-				"name": "1.0",
+				"name": "StockOptionLevel",
 				"type": "String"
 			},
 			{
-				"name": "10151.166342132983",
+				"name": "MonthlyRate",
 				"type": "String"
 			}
 		]

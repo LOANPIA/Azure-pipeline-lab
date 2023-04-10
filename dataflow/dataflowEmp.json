@@ -47,6 +47,10 @@
 					"name": "FactWORKTIME"
 				},
 				{
+					"dataset": {
+						"referenceName": "PerformanceDS",
+						"type": "DatasetReference"
+					},
 					"name": "FactPERFORMANCE"
 				}
 			],
@@ -214,8 +218,15 @@
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
 				"     partitionBy('hash', 1)) ~> FactWORKTIME",
-				"source(allowSchemaDrift: true,",
+				"source(output(",
+				"          DistanceFromHome as string,",
+				"          PerformanceRating as string,",
+				"          StockOptionLevel as string,",
+				"          MonthlyRate as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
 				"     partitionBy('hash', 1)) ~> FactPERFORMANCE",
 				"DimEmployee derive(EmployeeName = replace(EmployeeName, \",\", \" \"),",
 				"          EmployeeNumber = replace(EmployeeNumber, \"#\", \"\"),",
