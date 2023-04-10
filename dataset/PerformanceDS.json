@@ -1,0 +1,41 @@
+{
+	"name": "PerformanceDS",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorageLS",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "Performance_Dirty.csv",
+				"folderPath": "folderkiki_dirty",
+				"container": "containerkiki"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "0.2230567621811197",
+				"type": "String"
+			},
+			{
+				"name": "3",
+				"type": "String"
+			},
+			{
+				"name": "1.0",
+				"type": "String"
+			},
+			{
+				"name": "10151.166342132983",
+				"type": "String"
+			}
+		]
+	}
+}

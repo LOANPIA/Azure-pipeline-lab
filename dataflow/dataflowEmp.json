@@ -45,6 +45,9 @@
 						"type": "DatasetReference"
 					},
 					"name": "FactWORKTIME"
+				},
+				{
+					"name": "FactPERFORMANCE"
 				}
 			],
 			"sinks": [
@@ -139,6 +142,9 @@
 				},
 				{
 					"name": "FilterWORKTIME"
+				},
+				{
+					"name": "FilterPERFORMANCE"
 				}
 			],
 			"scriptLines": [
@@ -208,6 +214,9 @@
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
 				"     partitionBy('hash', 1)) ~> FactWORKTIME",
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionBy('hash', 1)) ~> FactPERFORMANCE",
 				"DimEmployee derive(EmployeeName = replace(EmployeeName, \",\", \" \"),",
 				"          EmployeeNumber = replace(EmployeeNumber, \"#\", \"\"),",
 				"          Gender = iif(isNull(Gender), \"LGBT\", replace(Gender, \"Felmeal\", \"Female\")),",
@@ -236,6 +245,7 @@
 				"          TotalWorkingYears = toInteger(TotalWorkingYears),",
 				"          YearsAtCompany = toInteger(YearsAtCompany),",
 				"          YearsSinceLastPromotion = iif(YearsSinceLastPromotion < 0, 0, YearsSinceLastPromotion)) ~> FilterWORKTIME",
+				"FactPERFORMANCE derive(DistanceFromHome = toInteger(DistanceFromHome)) ~> FilterPERFORMANCE",
 				"FilterEMP sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delimited',",
