@@ -3,8 +3,8 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "GetListEmp",
-				"type": "Lookup",
+				"name": "Stored procedure FactLossWorker",
+				"type": "SqlServerStoredProcedure",
 				"dependsOn": [],
 				"policy": {
 					"timeout": "0.12:00:00",
@@ -15,17 +15,11 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"source": {
-						"type": "AzureSqlSource",
-						"sqlReaderQuery": "SELECT EmployeeID FROM dbo.employees",
-						"queryTimeout": "02:00:00",
-						"partitionOption": "None"
-					},
-					"dataset": {
-						"referenceName": "AzureSqlTable_procto_FACT",
-						"type": "DatasetReference"
-					},
-					"firstRowOnly": false
+					"storedProcedureName": "[dbo].[sp_populate_fact_loss_worker]"
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabasekiki",
+					"type": "LinkedServiceReference"
 				}
 			}
 		],
