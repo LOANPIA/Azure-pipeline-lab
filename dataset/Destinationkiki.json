@@ -1,0 +1,36 @@
+{
+	"name": "Destinationkiki",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStoragekiki",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "folderkiki_clean",
+				"fileSystem": "containerkiki"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "Education",
+				"type": "String"
+			},
+			{
+				"name": "EducationField",
+				"type": "String"
+			},
+			{
+				"name": "TrainingTimesLastYear",
+				"type": "String"
+			}
+		]
+	}
+}
