@@ -9,7 +9,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataset": {
-						"referenceName": "SourceMain",
+						"referenceName": "AzureSqlTableFACT",
 						"type": "DatasetReference"
 					},
 					"timeout": "0.12:00:00",
@@ -45,6 +45,7 @@
 					],
 					"storeSettings": {
 						"type": "AzureBlobStorageReadSettings",
+						"recursive": true,
 						"enablePartitionDiscovery": false
 					},
 					"formatSettings": {

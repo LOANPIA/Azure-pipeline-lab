@@ -1,0 +1,84 @@
+{
+	"name": "AzureSqlTableFACT",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabasekiki",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "EmployeeID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "StockID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "TotalShares",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "TotalValue",
+				"type": "decimal",
+				"precision": 18,
+				"scale": 2
+			},
+			{
+				"name": "Salary",
+				"type": "decimal",
+				"precision": 18,
+				"scale": 2
+			},
+			{
+				"name": "EmployeeTenureID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "EmployeeSatisfactionID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "AvgSharesPerTenure",
+				"type": "decimal",
+				"precision": 18,
+				"scale": 2
+			},
+			{
+				"name": "TotalValueToSalaryRatio",
+				"type": "decimal",
+				"precision": 18,
+				"scale": 2
+			},
+			{
+				"name": "TotalValueToInitialValueRatio",
+				"type": "decimal",
+				"precision": 18,
+				"scale": 2
+			},
+			{
+				"name": "TotalSharesToAllocatedSharesRatio",
+				"type": "decimal",
+				"precision": 18,
+				"scale": 2
+			},
+			{
+				"name": "TotalSharesToCashSharesRatio",
+				"type": "decimal",
+				"precision": 18,
+				"scale": 2
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "FACT_LossWorker"
+		}
+	}
+}
