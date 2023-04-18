@@ -1,5 +1,5 @@
 {
-	"name": "dataflowEmp",
+	"name": "dataflowFilterClean",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
