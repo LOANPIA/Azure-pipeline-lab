@@ -1,0 +1,24 @@
+{
+	"name": "FACTLoss",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorageSink",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "FACTLoss.csv",
+				"folderPath": "folderkiki_dirty",
+				"container": "containerkiki"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}
