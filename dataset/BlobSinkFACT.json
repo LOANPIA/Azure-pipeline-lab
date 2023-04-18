@@ -1,0 +1,40 @@
+{
+	"name": "BlobSinkFACT",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorageSink",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": {
+					"value": "@CONCAT(pipeline().RunId, '.csv')",
+					"type": "Expression"
+				},
+				"folderPath": "folderkiki_dirty",
+				"container": "containerkiki"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "Education",
+				"type": "String"
+			},
+			{
+				"name": "EducationField",
+				"type": "String"
+			},
+			{
+				"name": "TrainingTimesLastYear",
+				"type": "String"
+			}
+		]
+	}
+}
