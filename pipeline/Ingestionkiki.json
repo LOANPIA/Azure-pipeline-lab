@@ -23,7 +23,7 @@
 					{
 						"activity": "Validation1",
 						"dependencyConditions": [
-							"Skipped"
+							"Succeeded"
 						]
 					}
 				],
@@ -59,7 +59,7 @@
 					{
 						"activity": "Get Metadata1",
 						"dependencyConditions": [
-							"Skipped"
+							"Succeeded"
 						]
 					}
 				],
@@ -119,7 +119,7 @@
 					{
 						"activity": "Copy data1",
 						"dependencyConditions": [
-							"Skipped"
+							"Succeeded"
 						]
 					}
 				],
