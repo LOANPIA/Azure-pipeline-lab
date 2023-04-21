@@ -3,13 +3,13 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Validation1",
+				"name": "Validation-sourceFACTLossWorker",
 				"type": "Validation",
 				"dependsOn": [],
 				"userProperties": [],
 				"typeProperties": {
 					"dataset": {
-						"referenceName": "SourceMain",
+						"referenceName": "source",
 						"type": "DatasetReference"
 					},
 					"timeout": "0.12:00:00",
@@ -17,13 +17,13 @@
 				}
 			},
 			{
-				"name": "Get Metadata1",
+				"name": "Get Metadata-sourceFACTLossWorker",
 				"type": "GetMetadata",
 				"dependsOn": [
 					{
-						"activity": "Validation1",
+						"activity": "Validation-sourceFACTLossWorker",
 						"dependencyConditions": [
-							"Skipped"
+							"Succeeded"
 						]
 					}
 				],
@@ -37,7 +37,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataset": {
-						"referenceName": "SourceMain",
+						"referenceName": "source",
 						"type": "DatasetReference"
 					},
 					"fieldList": [
@@ -45,6 +45,7 @@
 					],
 					"storeSettings": {
 						"type": "AzureBlobStorageReadSettings",
+						"recursive": true,
 						"enablePartitionDiscovery": false
 					},
 					"formatSettings": {
@@ -53,13 +54,13 @@
 				}
 			},
 			{
-				"name": "Copy data1",
+				"name": "Copy data to destination",
 				"type": "Copy",
 				"dependsOn": [
 					{
-						"activity": "Get Metadata1",
+						"activity": "Get Metadata-sourceFACTLossWorker",
 						"dependencyConditions": [
-							"Skipped"
+							"Succeeded"
 						]
 					}
 				],
@@ -72,17 +73,59 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"enableStaging": false
-				}
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobStorageWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "source",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "destinationkiki",
+						"type": "DatasetReference"
+					}
+				]
 			},
 			{
-				"name": "Delete1",
+				"name": "Delete-datainDirty",
 				"type": "Delete",
 				"dependsOn": [
 					{
-						"activity": "Copy data1",
+						"activity": "Copy data to destination",
 						"dependencyConditions": [
-							"Skipped"
+							"Succeeded"
 						]
 					}
 				],
@@ -95,10 +138,27 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"enableLogging": true
+					"dataset": {
+						"referenceName": "source",
+						"type": "DatasetReference"
+					},
+					"logStorageSettings": {
+						"linkedServiceName": {
+							"referenceName": "AzureBlobStorageLS",
+							"type": "LinkedServiceReference"
+						}
+					},
+					"enableLogging": true,
+					"storeSettings": {
+						"type": "AzureBlobStorageReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false
+					}
 				}
 			}
 		],
-		"annotations": []
-	}
+		"annotations": [],
+		"lastPublishTime": "2023-04-19T14:09:22Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
 }

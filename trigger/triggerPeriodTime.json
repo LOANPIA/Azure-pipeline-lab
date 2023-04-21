@@ -1,0 +1,25 @@
+{
+	"name": "triggerPeriodTime",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "LoadFacttbltoContainer",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Minute",
+				"interval": 30,
+				"startTime": "2023-04-18T09:14:00",
+				"endTime": "2023-04-19T09:14:00",
+				"timeZone": "SE Asia Standard Time"
+			}
+		}
+	}
+}

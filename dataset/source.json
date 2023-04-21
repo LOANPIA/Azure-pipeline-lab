@@ -1,0 +1,74 @@
+{
+	"name": "source",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorageLS",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "FACTLossWorker.csv",
+				"folderPath": "folderkiki_dirty",
+				"container": "containerkiki"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "EmployeeID",
+				"type": "String"
+			},
+			{
+				"name": "StockID",
+				"type": "String"
+			},
+			{
+				"name": "TotalShares",
+				"type": "String"
+			},
+			{
+				"name": "TotalValue",
+				"type": "String"
+			},
+			{
+				"name": "Salary",
+				"type": "String"
+			},
+			{
+				"name": "EmployeeTenureID",
+				"type": "String"
+			},
+			{
+				"name": "EmployeeSatisfactionID",
+				"type": "String"
+			},
+			{
+				"name": "AvgSharesPerTenure",
+				"type": "String"
+			},
+			{
+				"name": "TotalValueToSalaryRatio",
+				"type": "String"
+			},
+			{
+				"name": "TotalValueToInitialValueRatio",
+				"type": "String"
+			},
+			{
+				"name": "TotalSharesToAllocatedSharesRatio",
+				"type": "String"
+			},
+			{
+				"name": "TotalSharesToCashSharesRatio",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
