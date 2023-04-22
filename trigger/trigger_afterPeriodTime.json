@@ -1,12 +1,12 @@
 {
-	"name": "triggerPeriodTime",
+	"name": "trigger_afterPeriodTime",
 	"properties": {
 		"annotations": [],
 		"runtimeState": "Stopped",
 		"pipelines": [
 			{
 				"pipelineReference": {
-					"referenceName": "LoadFacttbltoContainer",
+					"referenceName": "Final_Integration",
 					"type": "PipelineReference"
 				}
 			}
@@ -15,9 +15,9 @@
 		"typeProperties": {
 			"recurrence": {
 				"frequency": "Minute",
-				"interval": 30,
-				"startTime": "2023-04-22T18:30:00",
-				"endTime": "2023-04-25T09:14:00",
+				"interval": 35,
+				"startTime": "2023-04-22T18:35:00",
+				"endTime": "2023-04-25T10:20:00",
 				"timeZone": "SE Asia Standard Time"
 			}
 		}
