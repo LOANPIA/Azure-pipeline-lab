@@ -1,0 +1,70 @@
+{
+	"name": "dataflowEmp_copy1",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "JobDS",
+						"type": "DatasetReference"
+					},
+					"name": "FactJOB"
+				}
+			],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "AzureDataLakeStoragekiki",
+						"type": "LinkedServiceReference"
+					},
+					"name": "LoadJOB",
+					"rejectedDataLinkedService": {
+						"referenceName": "AzureBlobStorageSink",
+						"type": "LinkedServiceReference"
+					}
+				}
+			],
+			"transformations": [
+				{
+					"name": "FilterJOB"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          Attrition as string,",
+				"          BusinessTravel as string,",
+				"          Department as string,",
+				"          JobLevel as integer,",
+				"          JobRole as string,",
+				"          NumCompaniesWorked as string,",
+				"          OverTime as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> FactJOB",
+				"FactJOB derive(Attrition = iif(Attrition == 'Undefined', iif(OverTime == 'Yes', 'Yes', 'No'), Attrition),",
+				"          BusinessTravel = replace(BusinessTravel, '$%^', ''),",
+				"          Department = replace(Department, ', Dev', '& Development'),",
+				"          JobLevel = iif((JobLevel == 1) || (JobLevel == 2) || (JobLevel == 3) || (JobLevel == 4) || (JobLevel == 5), JobLevel, 1),",
+				"     partitionBy('hash', 1)) ~> FilterJOB",
+				"FilterJOB sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delimited',",
+				"     fileSystem: 'containerkiki',",
+				"     folderPath: 'folderkiki_clean',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: true,",
+				"     partitionFileNames:['Job_Data.csv'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> LoadJOB"
+			]
+		}
+	}
+}
