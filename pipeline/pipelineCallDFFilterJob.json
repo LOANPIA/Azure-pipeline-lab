@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "dataflowEmp_copy1",
+						"referenceName": "dataflowJob",
 						"type": "DataFlowReference"
 					},
 					"compute": {
